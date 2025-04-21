@@ -7,8 +7,18 @@ import json
 import io
 
 # Titel en instructie
-st.title("📷 Geo-Exif Analyse - Verste Locaties in Nederland")
+st.title("📷 Geo-Exif Analyse - De 20 lokaties in Nederland die het verst van 1 van je bestaande foto's zijn.")
 st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat), en ontdek de 20 verste plekken in Nederland waar je nog geen foto hebt gemaakt.")
+"""
+## 🗺️ Stappenplan (voor Mac)
+
+1. Installeer, indien nodig, homebrew en exiftool:
+  - homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+  - exiftool: brew install exiftool
+2. Ga in de terminal naar de map waar je foto's staan. Voor de Apple Photo's app is dat bijvoorbeeld zoiets als `~/Pictures/Photos Library.photoslibrary/originals`
+3. Voer dit commando uit: `exiftool -csv -gpslatitude -gpslongitude -datetimeoriginal -c "%d %d %.8f" -fast2 -r . > ~/Desktop/gps-data.csv`
+4. Upload dit bestand hier.
+"""
 
 # Uploadbestand
 uploaded_file = st.file_uploader("Upload je CSV-bestand met geotags", type=["csv"])
