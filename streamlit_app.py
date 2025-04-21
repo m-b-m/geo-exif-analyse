@@ -12,13 +12,14 @@ st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat),
 """
 ## 🗺️ Stappenplan (voor Mac)
 
-1. Installeer, indien nodig, homebrew en exiftool:
+1. Open je terminal 
+2. Installeer, indien nodig, homebrew en exiftool:
   - homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-  - exiftool: brew install exiftool
-2. Ga in de terminal naar de map waar je foto's staan. Voor de Apple Photo's app is dat bijvoorbeeld zoiets als `~/Pictures/Photos Library.photoslibrary/originals`
-3. Voer dit commando uit: `exiftool -csv -gpslatitude -gpslongitude -datetimeoriginal -c "%d %d %.8f" -fast2 -r . > ~/Desktop/gps-data.csv`
-4. Upload dit bestand hier.
-5. Op https://www.google.com/mymaps kan je een mooi kaartje maken met de .csv
+  - exiftool: `brew install exiftool`
+3. Ga in de terminal naar de map waar je foto's staan. Voor de Apple Photo's app is dat bijvoorbeeld zoiets als `~/Pictures/Photos Library.photoslibrary/originals`
+4. Voer dit commando uit: `exiftool -csv -gpslatitude -gpslongitude -datetimeoriginal -c "%d %d %.8f" -fast2 -r . > ~/Desktop/gps-data.csv`
+5. Upload dit bestand hier.
+6. Op https://www.google.com/mymaps kan je een mooi kaartje maken met de .csv
 """
 
 # Uploadbestand
