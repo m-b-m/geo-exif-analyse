@@ -36,7 +36,7 @@ def dms_to_decimal(dms_str):
 
 # Laad Nederland-grens uit GeoJSON (van GADM bijvoorbeeld)
 def load_nl_shape():
-    with open("gadm41_NLD_0.json", "r") as f:
+    with open("nederland_vasteland.geojson", "r") as f:
         data = json.load(f)
     geom = shape(data['features'][0]['geometry'])
     if isinstance(geom, MultiPolygon):
