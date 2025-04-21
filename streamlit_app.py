@@ -22,9 +22,6 @@ st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat),
 6. Op https://www.google.com/mymaps kan je een mooi kaartje maken met de .csv
 """
 
-# Uploadbestand
-uploaded_file = st.file_uploader("Upload je CSV-bestand met geotags", type=["csv"])
-
 # Helper: DMS naar decimalen
 import re
 def dms_to_decimal(dms_str):
@@ -39,12 +36,18 @@ def dms_to_decimal(dms_str):
 
 # Laad Nederland-grens uit GeoJSON (van GADM bijvoorbeeld)
 def load_nl_shape():
-    with open("nederland_vasteland.geojson", "r") as f:
+    with open("gadm41_NLD_0.json", "r") as f:
         data = json.load(f)
     geom = shape(data['features'][0]['geometry'])
     if isinstance(geom, MultiPolygon):
         return max(geom.geoms, key=lambda p: p.area)  # grootste polygon = vasteland
     return geom
+
+# Uploadbestand
+uploaded_file = st.file_uploader("Upload je CSV-bestand met geotags", type=["csv"])
+
+# Laad shape van Nederland
+nl_shape = load_nl_shape()
 
 # Verwerk bestand als het is geüpload
 if uploaded_file:
@@ -64,7 +67,6 @@ if uploaded_file:
 
         # Grid genereren over Nederland
         st.write("Bezig met locatie-analyse...")
-        nl_shape = load_nl_shape()
         lon_vals = np.linspace(3.3, 7.2, 300)
         lat_vals = np.linspace(50.75, 53.5, 300)
         grid_points = [Point(lon, lat) for lat in lat_vals for lon in lon_vals if nl_shape.contains(Point(lon, lat))]
@@ -100,6 +102,28 @@ if uploaded_file:
 
         st.success("Analyse voltooid! Hieronder zie je de top 20.")
         st.dataframe(result_df)
+
+        # Streamlit map visualisatie
+        st.pydeck_chart(pdk.Deck(
+            map_style="mapbox://styles/mapbox/light-v9",
+            initial_view_state=pdk.ViewState(
+                latitude=52.1,
+                longitude=5.4,
+                zoom=6.2,
+                pitch=0
+            ),
+            layers=[
+                pdk.Layer(
+                    "ScatterplotLayer",
+                    data=result_df,
+                    get_position='[Longitude, Latitude]',
+                    get_color='[200, 30, 0, 160]',
+                    get_radius=500,
+                    pickable=True,
+                    tooltip=True,
+                )
+            ]
+        ))
 
         # Downloadlink
         csv = result_df.to_csv(index=False).encode('utf-8')
