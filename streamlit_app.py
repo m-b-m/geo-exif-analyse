@@ -96,7 +96,7 @@ if uploaded_file:
         # Resultaat tonen
         result_df = pd.DataFrame({
             'Name': [f'Locatie {i+1}' for i in range(len(selected))],
-            'Afstand': [round(r.distance_km) for r in selected],
+            'Afstand': [str(round(r.distance_km)) for r in selected],
             'Latitude': [r.geometry.y for r in selected],
             'Longitude': [r.geometry.x for r in selected]
         })
@@ -106,7 +106,7 @@ if uploaded_file:
 
         # Streamlit map visualisatie
         st.pydeck_chart(pdk.Deck(
-            map_style="mapbox://styles/mapbox/light-v9",
+            map_style="mapbox://styles/mapbox/streets-v11",
             initial_view_state=pdk.ViewState(
                 latitude=52.1,
                 longitude=5.4,
@@ -129,7 +129,7 @@ if uploaded_file:
                     data=result_df,
                     get_position='[Longitude, Latitude]',
                     get_text='Afstand',
-                    get_size=16,
+                    get_size=24,
                     get_color='[0, 0, 0]',
                     get_angle=0,
                     get_alignment_baseline="'bottom'"
