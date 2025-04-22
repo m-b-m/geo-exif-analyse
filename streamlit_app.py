@@ -112,7 +112,10 @@ if uploaded_file:
 
         # Resultaat tonen
         result_df = pd.DataFrame({
-            'Name': [f'Locatie {i+1}' for i in range(len(selected))],
+            'Name': [
+                f"[Locatie {i+1}](https://www.google.com/maps/search/?api=1&query={r.geometry.y},{r.geometry.x})"
+                for i, r in enumerate(selected)
+            ],
             'Afstand': [round(r.distance_km, 1) for r in selected],
             'Latitude': [r.geometry.y for r in selected],
             'Longitude': [r.geometry.x for r in selected]
@@ -129,8 +132,9 @@ if uploaded_file:
 
 
 
-        st.success("Analyse voltooid! Hieronder zie je de top 20.")
-        st.dataframe(result_df)
+        st.success("Analyse voltooid! Hieronder zie je de top 20 in een tabel, een kaartje en als download.")
+
+        st.markdown(result_df.to_markdown(index=False), unsafe_allow_html=True)
 
         # Streamlit map visualisatie
         st.pydeck_chart(pdk.Deck(
