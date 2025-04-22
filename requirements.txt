@@ -4,3 +4,4 @@ numpy
 scipy
 shapely
 pydeck
+tabulate
