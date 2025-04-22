@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import pydeck as pdk
 from scipy.spatial import cKDTree
-from shapely.geometry import Point, MultiPolygon, shape, Polygon
+from shapely.geometry import Point, MultiPolygon, shape, Polygon, MplPolygon
 import json
 import io
 import matplotlib.pyplot as plt
