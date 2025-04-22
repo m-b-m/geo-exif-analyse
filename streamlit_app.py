@@ -96,18 +96,24 @@ nl_shape = load_nl_shape()
 
 # Verwerk bestand als het is geüpload
 if uploaded_file:
-    placeholder = st.empty()
 
-    with placeholder.container():
-        st.markdown('<div class="sims-loader">', unsafe_allow_html=True)
-        st.markdown('<div class="sims-title">Now loading…</div>', unsafe_allow_html=True)
+    loader_box = st.empty()
+    progress_bar = st.progress(0)
 
-        for i in range(5):
-            st.markdown(f'<div class="sims-quote">{random.choice(quotes)}</div>', unsafe_allow_html=True)
-            st.progress((i + 1) * 20)
-            time.sleep(1.2)
+    for i in range(5):
+        quote = random.choice(quotes)
+        loader_box.markdown(f"""
+            <div class="sims-loader">
+                <div class="sims-title">Now loading…</div>
+                <div class="sims-quote">{quote}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        progress_bar.progress((i + 1) * 20)
+        time.sleep(1.2)
 
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Opruimen
+    loader_box.empty()
+    progress_bar.empty()
     df = pd.read_csv(uploaded_file)
 
     # Omzetten naar decimale coördinaten
