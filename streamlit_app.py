@@ -11,6 +11,7 @@ from matplotlib.patches import Polygon as MplPolygon
 from matplotlib.collections import PatchCollection
 import random
 import time
+import threading
 
 st.markdown("""
     <style>
@@ -49,6 +50,27 @@ quotes = [
     "De konijnenhol-fotodatabase wordt gesynchroniseerd…",
     "Bezig met het opsporen van je fotografische blinde vlekken…"
 ]
+
+# Loading state
+stop_loading = False
+loader_box = st.empty()
+progress_bar = st.progress(0)
+
+def loading_animation():
+    i = 0
+    while not stop_loading:
+        quote = quotes[i % len(quotes)]
+        loader_box.markdown(f"""
+            <div class="sims-loader">
+                <div class="sims-title">Now loading…</div>
+                <div class="sims-quote">{quote}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        progress_bar.progress(((i % 10) + 1) * 10)
+        i += 1
+        time.sleep(0.8)
+
+thread = threading.Thread(target=loading_animation)
 
 
 # Titel en instructie
@@ -95,20 +117,7 @@ nl_shape = load_nl_shape()
 
 # Verwerk bestand als het is geüpload
 if uploaded_file:
-
-    loader_box = st.empty()
-    progress_bar = st.progress(0)
-
-    for i in range(10):
-        quote = random.choice(quotes)
-        loader_box.markdown(f"""
-            <div class="sims-loader">
-                <div class="sims-title">Now loading…</div>
-                <div class="sims-quote">{quote}</div>
-            </div>
-        """, unsafe_allow_html=True)
-        progress_bar.progress((i + 1) * 20)
-        time.sleep(0.6)
+    thread.start()
 
     df = pd.read_csv(uploaded_file)
 
@@ -187,12 +196,11 @@ if uploaded_file:
             for row in selected
         ])
 
-        # Opruimen
+        st.success("Analyse voltooid! Hieronder zie je de top 20 in een tabel, een kaartje en als download.")
+        stop_loading = True
+        thread.join()
         loader_box.empty()
         progress_bar.empty()
-
-        st.success("Analyse voltooid! Hieronder zie je de top 20 in een tabel, een kaartje en als download.")
-
         st.markdown(result_df.to_markdown(index=False), unsafe_allow_html=True)
 
         # Streamlit map visualisatie
