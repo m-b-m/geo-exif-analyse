@@ -6,6 +6,9 @@ from scipy.spatial import cKDTree
 from shapely.geometry import Point, MultiPolygon, shape
 import json
 import io
+import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
+
 
 # Titel en instructie
 st.title("📷 Geo-Exif Analyse - De 20 lokaties in Nederland die het verst van 1 van je bestaande foto's zijn.")
@@ -131,7 +134,6 @@ if uploaded_file:
         ])
 
 
-
         st.success("Analyse voltooid! Hieronder zie je de top 20 in een tabel, een kaartje en als download.")
 
         st.markdown(result_df.to_markdown(index=False), unsafe_allow_html=True)
@@ -177,3 +179,27 @@ if uploaded_file:
             file_name='top20_verste_punten.csv',
             mime='text/csv'
         )
+
+        # Voronoi op basis van alle fotopunten
+        vor = Voronoi(photo_coords)
+
+        # Haal de 20 verste punten uit de dataframe
+        top_20_points = result_df[['Longitude', 'Latitude']].to_numpy()
+
+        # Plot Voronoi-diagram
+        fig, ax = plt.subplots(figsize=(8, 10))
+        voronoi_plot_2d(vor, ax=ax, show_vertices=False, line_colors='gray', line_width=1.5, line_alpha=0.6, point_size=0)
+
+        # Plot foto's
+        ax.scatter(photo_coords[:, 0], photo_coords[:, 1], color='red', label='Foto-locaties', zorder=3)
+
+        # Plot verste punten
+        ax.scatter(top_20_points[:, 0], top_20_points[:, 1], color='blue', label='Top 20 verste punten', zorder=4)
+
+        ax.set_title("Voronoi-diagram met fotolocaties en top 20 verste punten")
+        ax.set_xlabel("Longitude")
+        ax.set_ylabel("Latitude")
+        ax.legend(loc='lower left')
+        plt.grid(True)
+        plt.tight_layout()
+        st.pyplot(fig)
