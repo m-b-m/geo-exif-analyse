@@ -20,7 +20,6 @@ st.markdown("""
         padding: 2em;
         border-radius: 1em;
         text-align: center;
-        font-family: 'Comic Sans MS', cursive;
         color: #003366;
         margin-bottom: 2em;
     }
