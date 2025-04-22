@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 import pydeck as pdk
 from scipy.spatial import cKDTree
-from shapely.geometry import Point, MultiPolygon, shape, Polygon, MplPolygon
+from shapely.geometry import Point, MultiPolygon, shape, Polygon
 import json
 import io
 import matplotlib.pyplot as plt
 from scipy.spatial import Voronoi, voronoi_plot_2d
+from matplotlib.patches import Polygon as MplPolygon
 
 
 # Titel en instructie
