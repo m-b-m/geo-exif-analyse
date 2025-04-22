@@ -68,8 +68,28 @@ if uploaded_file:
 
         # Grid genereren over Nederland
         st.write("Bezig met locatie-analyse...")
-        lon_vals = np.linspace(3.3, 7.2, 500)
-        lat_vals = np.linspace(50.75, 53.5, 500)
+        # Stap 1: Grof raster
+        lon_vals_coarse = np.linspace(3.3, 7.2, 100)
+        lat_vals_coarse = np.linspace(50.75, 53.5, 100)
+        coarse_grid = [Point(lon, lat) for lat in lat_vals_coarse for lon in lon_vals_coarse if nl_shape.contains(Point(lon, lat))]
+        coarse_coords = np.array([(p.x, p.y) for p in coarse_grid])
+        coarse_dists, _ = photo_tree.query(coarse_coords)
+
+        # Selecteer top 100 grofste punten
+        top_indices = np.argsort(coarse_dists)[-100:]
+        focus_points = [coarse_grid[i] for i in top_indices]
+
+        # Stap 2: Fijn raster rond elk top-punt
+        fine_grid = []
+        for p in focus_points:
+            lon_vals_fine = np.linspace(p.x - 0.05, p.x + 0.05, 15)
+            lat_vals_fine = np.linspace(p.y - 0.05, p.y + 0.05, 15)
+            fine_grid += [Point(lon, lat) for lat in lat_vals_fine for lon in lon_vals_fine if nl_shape.contains(Point(lon, lat))]
+
+        # Gebruik fine_grid als nieuw raster voor analyse
+        grid_points = fine_grid
+        grid_coords = np.array([(p.x, p.y) for p in grid_points])
+        dists, indices = photo_tree.query(grid_coords)
         grid_points = [Point(lon, lat) for lat in lat_vals for lon in lon_vals if nl_shape.contains(Point(lon, lat))]
 
         grid_coords = np.array([(p.x, p.y) for p in grid_points])
@@ -96,7 +116,7 @@ if uploaded_file:
         # Resultaat tonen
         result_df = pd.DataFrame({
             'Name': [f'Locatie {i+1}' for i in range(len(selected))],
-            'Afstand': [r.distance_km for r in selected],
+            'Afstand': [str(round(r.distance_km),1) for r in selected],
             'Latitude': [r.geometry.y for r in selected],
             'Longitude': [r.geometry.x for r in selected]
         })
