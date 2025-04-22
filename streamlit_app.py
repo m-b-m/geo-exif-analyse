@@ -7,9 +7,26 @@ from shapely.geometry import Point, MultiPolygon, shape, Polygon
 import json
 import io
 import matplotlib.pyplot as plt
-from scipy.spatial import Voronoi, voronoi_plot_2d
 from matplotlib.patches import Polygon as MplPolygon
 from matplotlib.collections import PatchCollection
+import random
+import time
+
+
+# Loader quotes
+quotes = [
+    "Grid aan het genereren over Nederland…",
+    "Reticulating splines…",
+    "Top 20 wordt geselecteerd op basis van maximale isolement…",
+    "Verstrooide pixels worden verzameld…",
+    "De platte aarde wordt kort gereconstrueerd voor afstandsberekeningen…",
+    "Nederland wordt opgemeten in 90.000 stukjes…",
+    "Onzichtbare grenzen van Drenthe worden gerespecteerd…",
+    "We meten hoever je ooit van je camera bent weggelopen…",
+    "Het raster maakt zich klaar voor een diepe analyse…",
+    "De konijnenhol-fotodatabase wordt gesynchroniseerd…",
+    "Bezig met het opsporen van je fotografische blinde vlekken…"
+]
 
 
 # Titel en instructie
@@ -57,6 +74,10 @@ nl_shape = load_nl_shape()
 
 # Verwerk bestand als het is geüpload
 if uploaded_file:
+    placeholder = st.empty()
+    for _ in range(5):
+        placeholder.info(random.choice(quotes))
+        time.sleep(1.2)
     df = pd.read_csv(uploaded_file)
 
     # Omzetten naar decimale coördinaten
@@ -72,7 +93,6 @@ if uploaded_file:
         photo_tree = cKDTree(photo_coords)
 
         # Grid genereren over Nederland
-        st.write("Bezig met locatie-analyse...")
         # Stap 1: Grof raster
         lon_vals_coarse = np.linspace(3.3, 7.2, 100)
         lat_vals_coarse = np.linspace(50.75, 53.5, 100)
@@ -182,43 +202,3 @@ if uploaded_file:
             mime='text/csv'
         )
 
-        # Voronoi op basis van alle fotopunten
-        vor = Voronoi(photo_coords)
-
-        # Haal de 20 verste punten uit de dataframe
-        top_20_points = result_df[['Longitude', 'Latitude']].to_numpy()
-
-        # Plot Voronoi-diagram, geknipt op Nederland
-        fig, ax = plt.subplots(figsize=(8, 10))
-
-        # Voor elk Voronoi-gebied: teken alleen de intersectie met Nederland
-        patches = []
-        for region_index in vor.point_region:
-            region = vor.regions[region_index]
-            if not region or -1 in region:
-                continue  # onbegrensd of leeg
-            polygon = Polygon([vor.vertices[i] for i in region])
-            clipped = polygon.intersection(nl_shape)
-            if not clipped.is_empty:
-                if isinstance(clipped, Polygon):
-                    patches.append(MplPolygon(list(clipped.exterior.coords)))
-                elif isinstance(clipped, MultiPolygon):
-                    for part in clipped.geoms:
-                        patches.append(MplPolygon(list(part.exterior.coords)))
-
-        p = PatchCollection(patches, facecolor='lightgray', edgecolor='gray', alpha=0.6)
-        ax.add_collection(p)
-
-        # Plot foto's
-        ax.scatter(photo_coords[:, 0], photo_coords[:, 1], color='red', label='Foto-locaties', zorder=3)
-
-        # Plot verste punten
-        ax.scatter(top_20_points[:, 0], top_20_points[:, 1], color='blue', label='Top 20 verste punten', zorder=4)
-
-        ax.set_title("Voronoi-diagram binnen Nederland")
-        ax.set_xlabel("Longitude")
-        ax.set_ylabel("Latitude")
-        ax.legend(loc='lower left')
-        plt.grid(True)
-        plt.tight_layout()
-        st.pyplot(fig)
