@@ -20,7 +20,7 @@ st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat),
 3. Ga in de terminal naar de map waar je foto's staan. Voor de Apple Photo's app is dat bijvoorbeeld zoiets als `~/Pictures/Photos Library.photoslibrary/originals`
 4. Voer dit commando uit: `exiftool -csv -gpslatitude -gpslongitude -datetimeoriginal -c "%d %d %.8f" -fast2 -r . > ~/Desktop/gps-data.csv`
 5. Upload dit bestand hier.
-6. Op https://www.google.com/mymaps kan je een mooi kaartje maken met de .csv
+6. Voila, je ziet een tabel, een kaartje en een csv-download. Op https://www.google.com/mymaps kan je daarmee een mooi eigen kaartje maken.
 """
 
 # Helper: DMS naar decimalen
@@ -68,8 +68,8 @@ if uploaded_file:
 
         # Grid genereren over Nederland
         st.write("Bezig met locatie-analyse...")
-        lon_vals = np.linspace(3.3, 7.2, 300)
-        lat_vals = np.linspace(50.75, 53.5, 300)
+        lon_vals = np.linspace(3.3, 7.2, 500)
+        lat_vals = np.linspace(50.75, 53.5, 500)
         grid_points = [Point(lon, lat) for lat in lat_vals for lon in lon_vals if nl_shape.contains(Point(lon, lat))]
 
         grid_coords = np.array([(p.x, p.y) for p in grid_points])
