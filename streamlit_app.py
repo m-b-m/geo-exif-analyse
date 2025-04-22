@@ -12,6 +12,28 @@ from matplotlib.collections import PatchCollection
 import random
 import time
 
+st.markdown("""
+    <style>
+    .sims-loader {
+        background-color: #DDEEFF;
+        padding: 2em;
+        border-radius: 1em;
+        text-align: center;
+        font-family: 'Comic Sans MS', cursive;
+        color: #003366;
+        margin-bottom: 2em;
+    }
+    .sims-title {
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 1em;
+    }
+    .sims-quote {
+        font-size: 1.2em;
+        margin: 1em 0;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Loader quotes
 quotes = [
@@ -75,9 +97,17 @@ nl_shape = load_nl_shape()
 # Verwerk bestand als het is geüpload
 if uploaded_file:
     placeholder = st.empty()
-    for _ in range(5):
-        placeholder.info(random.choice(quotes))
-        time.sleep(1.2)
+
+    with placeholder.container():
+        st.markdown('<div class="sims-loader">', unsafe_allow_html=True)
+        st.markdown('<div class="sims-title">Now loading…</div>', unsafe_allow_html=True)
+
+        for i in range(5):
+            st.markdown(f'<div class="sims-quote">{random.choice(quotes)}</div>', unsafe_allow_html=True)
+            st.progress((i + 1) * 20)
+            time.sleep(1.2)
+
+        st.markdown('</div>', unsafe_allow_html=True)
     df = pd.read_csv(uploaded_file)
 
     # Omzetten naar decimale coördinaten
