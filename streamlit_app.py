@@ -53,7 +53,9 @@ quotes = [
 
 # Titel en instructie
 st.title("📷 Geo-Exif Analyse - De 20 lokaties in Nederland die het verst van 1 van je bestaande foto's zijn.")
-st.write("""
+instructions_box = st.empty()
+
+instructions_box.write("""
 Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat), en ontdek de 20 verste plekken in Nederland waar je nog geen foto hebt gemaakt.
 ## 🗺️ Stappenplan (voor Mac)
 
@@ -66,6 +68,7 @@ Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat), en ontdek
 5. Upload dit bestand hier.
 6. Voila, je ziet een tabel, een kaartje en een csv-download. Op https://www.google.com/mymaps kan je daarmee een mooi eigen kaartje maken.
 """)
+
 # Helper: DMS naar decimalen
 import re
 def dms_to_decimal(dms_str):
@@ -95,7 +98,7 @@ nl_shape = load_nl_shape()
 
 # Verwerk bestand als het is geüpload
 if uploaded_file:
-
+    instructions_box.empty()
     loader_box = st.empty()
     progress_bar = st.progress(0)
 
