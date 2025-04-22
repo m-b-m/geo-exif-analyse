@@ -111,9 +111,6 @@ if uploaded_file:
         progress_bar.progress((i + 1) * 20)
         time.sleep(1.2)
 
-    # Opruimen
-    loader_box.empty()
-    progress_bar.empty()
     df = pd.read_csv(uploaded_file)
 
     # Omzetten naar decimale coördinaten
@@ -191,6 +188,9 @@ if uploaded_file:
             for row in selected
         ])
 
+        # Opruimen
+        loader_box.empty()
+        progress_bar.empty()
 
         st.success("Analyse voltooid! Hieronder zie je de top 20 in een tabel, een kaartje en als download.")
 
