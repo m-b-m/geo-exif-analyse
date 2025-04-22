@@ -53,8 +53,8 @@ quotes = [
 
 # Titel en instructie
 st.title("📷 Geo-Exif Analyse - De 20 lokaties in Nederland die het verst van 1 van je bestaande foto's zijn.")
-st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat), en ontdek de 20 verste plekken in Nederland waar je nog geen foto hebt gemaakt.")
-"""
+st.write("""
+Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat), en ontdek de 20 verste plekken in Nederland waar je nog geen foto hebt gemaakt.
 ## 🗺️ Stappenplan (voor Mac)
 
 1. Open je terminal 
@@ -65,8 +65,7 @@ st.write("Upload een CSV met geotags (GPSLatitude, GPSLongitude in DMS-formaat),
 4. Voer dit commando uit: `exiftool -csv -gpslatitude -gpslongitude -datetimeoriginal -c "%d %d %.8f" -fast2 -r . > ~/Desktop/gps-data.csv`
 5. Upload dit bestand hier.
 6. Voila, je ziet een tabel, een kaartje en een csv-download. Op https://www.google.com/mymaps kan je daarmee een mooi eigen kaartje maken.
-"""
-
+""")
 # Helper: DMS naar decimalen
 import re
 def dms_to_decimal(dms_str):
@@ -100,7 +99,7 @@ if uploaded_file:
     loader_box = st.empty()
     progress_bar = st.progress(0)
 
-    for i in range(5):
+    for i in range(10):
         quote = random.choice(quotes)
         loader_box.markdown(f"""
             <div class="sims-loader">
@@ -109,7 +108,7 @@ if uploaded_file:
             </div>
         """, unsafe_allow_html=True)
         progress_bar.progress((i + 1) * 20)
-        time.sleep(1.2)
+        time.sleep(0.6)
 
     df = pd.read_csv(uploaded_file)
 
