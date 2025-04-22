@@ -107,6 +107,7 @@ if uploaded_file:
         # Streamlit map visualisatie
         st.pydeck_chart(pdk.Deck(
             map_style="mapbox://styles/mapbox/streets-v11",
+            tooltip={"text": "Afstand: {Afstand} km"},
             initial_view_state=pdk.ViewState(
                 latitude=52.1,
                 longitude=5.4,
@@ -122,18 +123,6 @@ if uploaded_file:
                     get_radius=1500,
                     pickable=True,
                     tooltip=True,
-                ),
-
-                pdk.Layer(
-                    "TextLayer",
-                    data=result_df,
-                    get_position='[Longitude, Latitude]',
-                    get_text='Afstand',
-                    get_size=16,
-                    size_scale=2,
-                    get_color='[0, 0, 0]',
-                    get_angle=0,
-                    get_alignment_baseline="'bottom'"
                 )
             ]
         ))
