@@ -102,13 +102,14 @@ if uploaded_file:
         })
         line_data = pd.DataFrame([
             {
-                "from_lon": row['Longitude'],
-                "from_lat": row['Latitude'],
-                "to_lon": photo_coords[row['nearest_photo_index']][0],
-                "to_lat": photo_coords[row['nearest_photo_index']][1],
+            "from_lon": row.geometry.x,
+            "from_lat": row.geometry.y,
+            "to_lon": photo_coords[row.nearest_photo_index][0],
+            "to_lat": photo_coords[row.nearest_photo_index][1]
             }
             for row in selected
         ])
+
 
 
         st.success("Analyse voltooid! Hieronder zie je de top 20.")
