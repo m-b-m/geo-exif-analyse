@@ -100,6 +100,16 @@ if uploaded_file:
             'Latitude': [r.geometry.y for r in selected],
             'Longitude': [r.geometry.x for r in selected]
         })
+        line_data = pd.DataFrame([
+            {
+                "from_lon": row['Longitude'],
+                "from_lat": row['Latitude'],
+                "to_lon": photo_coords[row['nearest_photo_index']][0],
+                "to_lat": photo_coords[row['nearest_photo_index']][1],
+            }
+            for row in selected
+        ])
+
 
         st.success("Analyse voltooid! Hieronder zie je de top 20.")
         st.dataframe(result_df)
@@ -123,6 +133,16 @@ if uploaded_file:
                     get_radius=1500,
                     pickable=True,
                     tooltip=True,
+                ),
+                # LineLayer toevoegen
+                pdk.Layer(
+                    "LineLayer",
+                    data=line_data,
+                    get_source_position='[from_lon, from_lat]',
+                    get_target_position='[to_lon, to_lat]',
+                    get_width=2,
+                    get_color='[100, 100, 200]',
+                    pickable=False
                 )
             ]
         ))
