@@ -99,7 +99,7 @@ if uploaded_file:
     loader_box = st.empty()
     progress_bar = st.progress(0)
 
-    for i in range(20):
+    for i in range(10):
         quote = random.choice(quotes)
         loader_box.markdown(f"""
             <div class="sims-loader">
