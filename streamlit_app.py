@@ -129,6 +129,8 @@ if uploaded_file:
                     data=result_df,
                     get_position='[Longitude, Latitude]',
                     get_text='Afstand',
+                    get_size=16,
+                    size_scale=2,
                     get_color='[0, 0, 0]',
                     get_angle=0,
                     get_alignment_baseline="'bottom'"
