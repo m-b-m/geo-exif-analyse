@@ -89,12 +89,9 @@ if uploaded_file:
         # Gebruik fine_grid als nieuw raster voor analyse
         grid_points = fine_grid
         grid_coords = np.array([(p.x, p.y) for p in grid_points])
-        dists, indices = photo_tree.query(grid_coords)
-        grid_points = [Point(lon, lat) for lat in lat_vals for lon in lon_vals if nl_shape.contains(Point(lon, lat))]
 
-        grid_coords = np.array([(p.x, p.y) for p in grid_points])
         dists, indices = photo_tree.query(grid_coords)
-
+        
         # Bouw dataframe met afstand + dichtstbijzijnde index
         df_all = pd.DataFrame({
             'geometry': grid_points,
