@@ -111,7 +111,7 @@ if uploaded_file:
             </div>
         """, unsafe_allow_html=True)
         progress_bar.progress((i + 1) * 10)
-        time.sleep(0.6)
+        time.sleep(1.0)
 
     df = pd.read_csv(uploaded_file)
 
