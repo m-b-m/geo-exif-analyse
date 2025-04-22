@@ -113,7 +113,7 @@ if uploaded_file:
         # Resultaat tonen
         result_df = pd.DataFrame({
             'Name': [f'Locatie {i+1}' for i in range(len(selected))],
-            'Afstand': [str(round(r.distance_km),1) for r in selected],
+            'Afstand': [round(r.distance_km, 1) for r in selected],
             'Latitude': [r.geometry.y for r in selected],
             'Longitude': [r.geometry.x for r in selected]
         })
