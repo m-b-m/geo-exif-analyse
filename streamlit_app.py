@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import pydeck as pdk
 from scipy.spatial import cKDTree
-from shapely.geometry import Point, MultiPolygon, shape
+from shapely.geometry import Point, MultiPolygon, shape, Polygon
 import json
 import io
 import matplotlib.pyplot as plt
@@ -180,47 +180,43 @@ if uploaded_file:
             mime='text/csv'
         )
 
-        if not result_df.empty:
-            try:
-                # Voronoi op basis van alle fotopunten
-                vor = Voronoi(photo_coords)
+        # Voronoi op basis van alle fotopunten
+        vor = Voronoi(photo_coords)
 
-                # Haal de 20 verste punten uit de dataframe
-                top_20_points = result_df[['Longitude', 'Latitude']].to_numpy()
+        # Haal de 20 verste punten uit de dataframe
+        top_20_points = result_df[['Longitude', 'Latitude']].to_numpy()
 
-                # Plot Voronoi-diagram, geknipt op Nederland
-                fig, ax = plt.subplots(figsize=(8, 10))
+        # Plot Voronoi-diagram, geknipt op Nederland
+        fig, ax = plt.subplots(figsize=(8, 10))
 
-                # Voor elk Voronoi-gebied: teken alleen de intersectie met Nederland
-                patches = []
-                for region_index in vor.point_region:
-                    region = vor.regions[region_index]
-                    if not region or -1 in region:
-                        continue  # onbegrensd of leeg
-                    polygon = Polygon([vor.vertices[i] for i in region])
-                    clipped = polygon.intersection(nl_shape)
-                    if not clipped.is_empty:
-                        if isinstance(clipped, Polygon):
-                            patches.append(MplPolygon(list(clipped.exterior.coords)))
-                        elif isinstance(clipped, MultiPolygon):
-                            for part in clipped.geoms:
-                                patches.append(MplPolygon(list(part.exterior.coords)))
+        # Voor elk Voronoi-gebied: teken alleen de intersectie met Nederland
+        patches = []
+        for region_index in vor.point_region:
+            region = vor.regions[region_index]
+            if not region or -1 in region:
+                continue  # onbegrensd of leeg
+            polygon = Polygon([vor.vertices[i] for i in region])
+            clipped = polygon.intersection(nl_shape)
+            if not clipped.is_empty:
+                if isinstance(clipped, Polygon):
+                    patches.append(MplPolygon(list(clipped.exterior.coords)))
+                elif isinstance(clipped, MultiPolygon):
+                    for part in clipped.geoms:
+                        patches.append(MplPolygon(list(part.exterior.coords)))
 
-                p = PatchCollection(patches, facecolor='lightgray', edgecolor='gray', alpha=0.6)
-                ax.add_collection(p)
+        p = PatchCollection(patches, facecolor='lightgray', edgecolor='gray', alpha=0.6)
+        ax.add_collection(p)
 
-                # Plot foto's
-                ax.scatter(photo_coords[:, 0], photo_coords[:, 1], color='red', label='Foto-locaties', zorder=3)
+        # Plot foto's
+        ax.scatter(photo_coords[:, 0], photo_coords[:, 1], color='red', label='Foto-locaties', zorder=3)
 
-                # Plot verste punten
-                ax.scatter(top_20_points[:, 0], top_20_points[:, 1], color='blue', label='Top 20 verste punten', zorder=4)
+        # Plot verste punten
+        ax.scatter(top_20_points[:, 0], top_20_points[:, 1], color='blue', label='Top 20 verste punten', zorder=4)
 
-                ax.set_title("Voronoi-diagram binnen Nederland")
-                ax.set_xlabel("Longitude")
-                ax.set_ylabel("Latitude")
-                ax.legend(loc='lower left')
-                plt.grid(True)
-                plt.tight_layout()
-                st.pyplot(fig)
-            except Exception as e:
-                st.warning(f"Kon Voronoi-diagram niet genereren: {e}")
+        ax.set_title("Voronoi-diagram binnen Nederland")
+        ax.set_xlabel("Longitude")
+        ax.set_ylabel("Latitude")
+        ax.legend(loc='lower left')
+        plt.grid(True)
+        plt.tight_layout()
+        st.pyplot(fig)
