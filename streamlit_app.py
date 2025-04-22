@@ -119,9 +119,20 @@ if uploaded_file:
                     data=result_df,
                     get_position='[Longitude, Latitude]',
                     get_color='[200, 30, 0, 160]',
-                    get_radius=500,
+                    get_radius=1500,
                     pickable=True,
                     tooltip=True,
+                ),
+
+                pdk.Layer(
+                    "TextLayer",
+                    data=result_df,
+                    get_position='[Longitude, Latitude]',
+                    get_text='Afstand',
+                    get_size=16,
+                    get_color='[0, 0, 0]',
+                    get_angle=0,
+                    get_alignment_baseline="'bottom'"
                 )
             ]
         ))
